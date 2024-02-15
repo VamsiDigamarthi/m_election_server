@@ -226,9 +226,11 @@ export const rejectedAllTaskFromUser = async (req, res) => {
 export const paymentNotReceviedUser = async (req, res) => {
   const userModal = getDb().db().collection("users");
   try {
-    const result = await userModal.find({
-      $and: [{ pay_mode_admin: "true" }, { district: req.params.district }],
-    });
+    const result = await userModal
+      .find({
+        $and: [{ pay_mode_admin: "true" }, { district: req.params.district }],
+      })
+      .toArray();
     res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({

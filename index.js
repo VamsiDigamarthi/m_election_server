@@ -3,6 +3,9 @@ import cors from "cors";
 import http from "http";
 // import { db } from "./Database";
 import bodyParser from "body-parser";
+import cluster from "cluster";
+import { cpus } from "os";
+const numCPUs = cpus().length;
 // route
 import AuthRoute from "./Routes/AuthRoute.js";
 import { initDb } from "./Database/mongoDb.js";
@@ -39,15 +42,31 @@ const server = http.createServer(app);
 //   )
 //   .catch((error) => console.log(`this is db not connected ${error}`));
 
-initDb((err, db) => {
-  if (err) {
-    console.log(err);
-  } else {
-    server.listen(process.env.PORT || 5001, () =>
-      console.log("Listening server at 5001 and connect db ........")
-    );
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
+
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
   }
-});
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else {
+  // const server = http.createServer(app);
+  // // const server = http.createServer(app);
+  // server.listen(PORT, () => {
+  //   console.log(`Server running on port ${PORT}`);
+  // });
+  initDb((err, db) => {
+    if (err) {
+      console.log(err);
+    } else {
+      server.listen(process.env.PORT || 5001, () =>
+        console.log("Listening server at 5001 and connect db ........")
+      );
+    }
+  });
+}
 
 app.use("/auth", AuthRoute);
 app.use("/state", StateRoute);
