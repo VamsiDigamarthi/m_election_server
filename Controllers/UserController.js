@@ -163,3 +163,23 @@ export const onCompletedCertificateKitFit = async (req, res) => {
     });
   }
 };
+
+export const downloadCertificate = async (req, res) => {
+  const userModal = getDb().db().collection("users");
+  // console.log(req.body.data);
+  try {
+    await userModal.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      {
+        $set: {
+          download_cer: req.body.data,
+        },
+      }
+    );
+    res.status(200).json("download certificated successfully ...!");
+  } catch (error) {
+    return res.status(500).json({
+      msg: "something went wrong please try again ....",
+    });
+  }
+};

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  downloadCertificate,
   kiStartImgUpload,
   onCompletedCertificateKitFit,
   onInstallationCertificateAndImage,
@@ -35,5 +36,7 @@ router.put(
   "/completed-certificate-kit-fitting-img/:id",
   onCompletedCertificateKitFit
 );
+
+router.put("/download-certificate/:id", downloadCertificate);
 
 export default router;
