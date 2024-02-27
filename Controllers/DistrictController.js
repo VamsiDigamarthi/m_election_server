@@ -1,4 +1,5 @@
 import { getDb } from "../Database/mongoDb.js";
+
 import mongodb from "mongodb";
 const ObjectId = mongodb.ObjectId;
 
@@ -128,6 +129,8 @@ const userTableUpdate = async (req, res) => {
 };
 
 const updateUserTaskAddedToPsDetails = async (req, res) => {
+  // console.log(req.params.name);
+  // console.log(req.params.phone);
   const psModal = getDb().db().collection("ps_details");
   try {
     await psModal.updateMany(
@@ -135,7 +138,12 @@ const updateUserTaskAddedToPsDetails = async (req, res) => {
         Location: req.body["taskOpenFilterData"][0]?.Location,
       },
       {
-        $set: { assign: "yes" },
+        $set: {
+          assign: "yes",
+          eassign: "yes",
+          name: req.params.name,
+          phone: req.params.phone,
+        },
       }
     );
     // console.log("second");
@@ -168,6 +176,7 @@ export const addTaskToUser = async (req, res) => {
       rejected_dist_assign_new_user: "no",
       action: "initiated",
       user_id: req.params.id,
+      task_id: i._id,
     });
   }
   try {
@@ -228,10 +237,44 @@ export const paymentNotReceviedUser = async (req, res) => {
   try {
     const result = await userModal
       .find({
-        $and: [{ pay_mode_admin: "true" }, { district: req.params.district }],
+        $and: [
+          { pay_mode_admin: "true" },
+          {
+            payment_text_user: "true",
+          },
+          { district: req.params.district },
+        ],
       })
       .toArray();
     res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+// updated rejected ps-details updated
+
+const onUpdatedRejectedPsEassign = async (req, res) => {
+  const psModal = getDb().db().collection("ps_details");
+  try {
+    await psModal.updateMany(
+      {
+        _id: new ObjectId(req.body.task_id),
+      },
+      {
+        $set: {
+          // assign: "yes",
+          eassign: "yes",
+          name: req.params.name,
+          phone: req.params.phone,
+        },
+      }
+    );
+    // console.log("second");
+    //  userTableUpdate(req, res);
+    userTableUpdate(req, res);
   } catch (error) {
     return res.status(500).json({
       msg: error,
@@ -247,7 +290,8 @@ const updatedOldTaskDistrictAssign = async (req, res) => {
       { _id: new ObjectId(req.body._id) },
       { $set: { rejected_dist_assign_new_user: "yes" } }
     );
-    userTableUpdate(req, res);
+    onUpdatedRejectedPsEassign(req, res);
+    // userTableUpdate(req, res);
   } catch (error) {
     return res.status(500).json({
       msg: error,
@@ -257,6 +301,7 @@ const updatedOldTaskDistrictAssign = async (req, res) => {
 
 export const addRejectedTask = async (req, res) => {
   const taskModal = getDb().db().collection("tasks");
+  // console.log(req.params.id);
   // console.log(req.body);
   try {
     const docs = {
@@ -275,6 +320,7 @@ export const addRejectedTask = async (req, res) => {
       rejected_dist_assign_new_user: "no",
       action: "initiated",
       user_id: req.params.id,
+      task_id: req.body.task_id,
     };
     // console.log(docs);
     await taskModal.insertOne(docs);
@@ -287,3 +333,18 @@ export const addRejectedTask = async (req, res) => {
 };
 
 export const rejectedTaskDistrictBased = async (req, res) => {};
+
+export const exelData = async (req, res) => {
+  // console.log(req.params.district);
+  const psModal = getDb().db().collection("ps_details");
+  try {
+    const result = await psModal
+      .find({ District: req.params.district })
+      .toArray();
+    res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};

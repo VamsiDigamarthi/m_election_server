@@ -3,6 +3,7 @@ import {
   addRejectedTask,
   addTaskToUser,
   districtCoorPsAcDetailsUsingDropdown,
+  exelData,
   notAssignMandalWiseUser,
   paymentInitiatedToUser,
   paymentNotReceviedUser,
@@ -30,7 +31,7 @@ router.get(
   notAssignMandalWiseUser
 );
 
-router.post("/add-task-user/:id", addTaskToUser);
+router.post("/add-task-user/:id/name/:name/phone/:phone", addTaskToUser);
 
 router.post("/payment-mode-admin-update/:id", paymentInitiatedToUser);
 
@@ -38,7 +39,15 @@ router.get("/rejected/tasks/district/:district", rejectedAllTaskFromUser);
 
 router.get("/payment/not/received/:district", paymentNotReceviedUser);
 
-router.post("/add-rejected-task-user/:id", addRejectedTask);
+router.post(
+  "/add-rejected-task-user/:id/name/:name/phone/:phone",
+  addRejectedTask
+);
 
 router.get("/rejected-task-data/:district", rejectedTaskDistrictBased);
+
+// Exel Data
+
+router.get("/exeldata/:district", exelData);
+
 export default router;

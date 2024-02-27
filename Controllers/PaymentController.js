@@ -49,8 +49,8 @@ export const onPaymentModeAccepted = async (req, res) => {
 
 export const paymnetNotReceived = async (req, res) => {
   const userModal = getDb().db().collection("users");
-  console.log(req.body);
-  console.log(req.params.id);
+  // console.log(req.body);
+  // console.log(req.params.id);
   try {
     await userModal.updateOne(
       { _id: new ObjectId(req.params.id) },
@@ -70,6 +70,7 @@ export const paymnetNotReceived = async (req, res) => {
 };
 
 export const paymentModeConfirm = async (req, res) => {
+  // console.log("dfvgbhjkml;");
   const userModal = getDb().db().collection("users");
   try {
     await userModal.updateOne(
@@ -78,6 +79,7 @@ export const paymentModeConfirm = async (req, res) => {
         $set: { pay_mode_user: req.body.paymentuserMode },
       }
     );
+    res.status(200).json("Your Complaint Accepted ");
   } catch (error) {
     return res.status(500).json({
       msg: error,

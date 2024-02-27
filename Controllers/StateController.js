@@ -7,7 +7,7 @@ const ObjectId = mongodb.ObjectId;
 export const bulkUpload = async (req, res) => {
   //   console.log(req.body);
   const psModal = getDb().db().collection("ps_details");
-  const newArr = req.body?.map((v) => ({ ...v, assign: "no" }));
+  const newArr = req.body?.map((v) => ({ ...v, assign: "no", eassign: "no" }));
   try {
     await psModal.insertMany(newArr);
     res.status(200).json({
