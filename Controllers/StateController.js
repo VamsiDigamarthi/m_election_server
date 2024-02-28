@@ -72,8 +72,6 @@ export const psDetailsFilterBasedOnDistrict = async (req, res) => {
 
 export const districtCoordinatorShowStateCoordinator = async (req, res) => {
   const userModal = getDb().db().collection("users");
-  console.log(req.params.district);
-  console.log(req.params.state);
   try {
     const result = await userModal.findOne(
       {
