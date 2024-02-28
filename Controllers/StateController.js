@@ -50,12 +50,15 @@ export const allPsDetails = async (req, res) => {
 
 export const psDetailsFilterBasedOnDistrict = async (req, res) => {
   const psModal = getDb().db().collection("ps_details");
+  console.log(req.body.selectedDist);
   try {
     const result = await psModal
       .find({
-        $and: [
+        $or: [
           { State: req.body.selectedState },
-          { District: req.body.selectedDist },
+          {
+            District: req.body.selectedDist,
+          },
         ],
       })
       .toArray();
@@ -69,7 +72,8 @@ export const psDetailsFilterBasedOnDistrict = async (req, res) => {
 
 export const districtCoordinatorShowStateCoordinator = async (req, res) => {
   const userModal = getDb().db().collection("users");
-  // console.log(req.params.district);
+  console.log(req.params.district);
+  console.log(req.params.state);
   try {
     const result = await userModal.findOne(
       {
@@ -81,7 +85,7 @@ export const districtCoordinatorShowStateCoordinator = async (req, res) => {
       },
       { _id: 1, name: 1, phone: 1 }
     );
-
+    console.log(result);
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({

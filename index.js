@@ -75,17 +75,17 @@ if (cluster.isMaster) {
 //   }
 // });
 
-// app.delete("/deltask", async (req, res) => {
-//   const userModal = getDb().db().collection("tasks");
-//   try {
-//     await userModal.deleteMany({});
-//     res.status(200).json({
-//       msg: "dele",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+app.delete("/deltask", async (req, res) => {
+  const userModal = getDb().db().collection("tasks");
+  try {
+    await userModal.deleteMany({});
+    res.status(200).json({
+      msg: "dele",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 app.post("/f-otp", async (req, res) => {
   const otp = getDb().db().collection("otp");
