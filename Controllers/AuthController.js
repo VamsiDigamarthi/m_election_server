@@ -66,7 +66,7 @@ export const login = async (req, res) => {
 //
 //
 export const sendOtp = async (req, res) => {
-  const { phone } = req.body;
+  const { phone, name } = req.body;
   getDb()
     .db()
     .collection("users")
@@ -88,7 +88,7 @@ export const sendOtp = async (req, res) => {
             if (otpUser) {
               var otp = Math.floor(1000 + Math.random() * 9000);
               fetch(
-                `https://pgapi.vispl.in/fe/api/v1/multiSend?username=btrak.trans&password=H6pxA&unicode=false&from=BTRACK&to=91${phone}&dltPrincipalEntityId=1201159541316676305&dltContentId=1207161517681422152&text=Dear Maruthi Your OTP is. ${otp} Regards, Brihaspathi Technologies`
+                `https://pgapi.vispl.in/fe/api/v1/multiSend?username=btrak.trans&password=H6pxA&unicode=false&from=BTRACK&to=91${phone}&dltPrincipalEntityId=1201159541316676305&dltContentId=1207161517681422152&text=Dear ${name} Your OTP is. ${otp} Regards, Brihaspathi Technologies`
               )
                 .then(() => {
                   getDb()
@@ -217,7 +217,7 @@ export const verifyOtp = async (req, res) => {
 };
 
 export const loginOtp = async (req, res) => {
-  const { phone } = req.body;
+  const { phone, name } = req.body;
 
   const otoModal = getDb().db().collection("otp");
   const userModal = getDb().db().collection("users");
@@ -227,7 +227,7 @@ export const loginOtp = async (req, res) => {
     // console.log(existUser);
     var otp = Math.floor(1000 + Math.random() * 9000);
     fetch(
-      `https://pgapi.vispl.in/fe/api/v1/multiSend?username=btrak.trans&password=H6pxA&unicode=false&from=BTRACK&to=91${phone}&dltPrincipalEntityId=1201159541316676305&dltContentId=1207161517681422152&text=Dear Maruthi Your OTP is. ${otp} Regards, Brihaspathi Technologies`
+      `https://pgapi.vispl.in/fe/api/v1/multiSend?username=btrak.trans&password=H6pxA&unicode=false&from=BTRACK&to=91${phone}&dltPrincipalEntityId=1201159541316676305&dltContentId=1207161517681422152&text=Dear ${name} Your OTP is. ${otp} Regards, Brihaspathi Technologies`
     )
       .then(() => {
         otoModal
