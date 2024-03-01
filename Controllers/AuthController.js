@@ -114,7 +114,7 @@ export const sendOtp = async (req, res) => {
               var otp = Math.floor(1000 + Math.random() * 9000);
               const doc = { phone: phone, otp_value: otp };
               fetch(
-                `https://pgapi.vispl.in/fe/api/v1/multiSend?username=btrak.trans&password=H6pxA&unicode=false&from=BTRACK&to=91${phone}&dltPrincipalEntityId=1201159541316676305&dltContentId=1207161517681422152&text=Dear Maruthi Your OTP is. ${otp} Regards, Brihaspathi Technologies`
+                `https://pgapi.vispl.in/fe/api/v1/multiSend?username=btrak.trans&password=H6pxA&unicode=false&from=BTRACK&to=91${phone}&dltPrincipalEntityId=1201159541316676305&dltContentId=1207161517681422152&text=Dear ${name} Your OTP is. ${otp} Regards, Brihaspathi Technologies`
               )
                 .then(() => {
                   getDb()
