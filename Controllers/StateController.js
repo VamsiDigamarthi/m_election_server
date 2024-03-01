@@ -83,7 +83,7 @@ export const districtCoordinatorShowStateCoordinator = async (req, res) => {
       },
       { _id: 1, name: 1, phone: 1 }
     );
-    console.log(result);
+    // console.log(result);
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({
