@@ -67,6 +67,7 @@ export const login = async (req, res) => {
 //
 export const sendOtp = async (req, res) => {
   const { phone, name } = req.body;
+  console.log(name);
   getDb()
     .db()
     .collection("users")
