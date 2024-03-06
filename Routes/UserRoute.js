@@ -4,6 +4,7 @@ import {
   kiStartImgUpload,
   onCompletedCertificateKitFit,
   onInstallationCertificateAndImage,
+  rejectedTasks,
   scoreDataWheneUserOpenLearning,
   updateScoreOfUser,
   updateTask,
@@ -24,6 +25,8 @@ router.put("/update-score/:id", updateScoreOfUser);
 router.get("/fetch-task/:id", userFetchTask);
 
 router.put("/update-task/:id", updateTask);
+
+router.put("/rejected/all/task/:id", rejectedTasks);
 
 router.put("/kit-start-image/upload/:id", kiStartImgUpload);
 

@@ -74,7 +74,7 @@ export const usersNotAssignTaskMandalwise = async (req, res) => {
           { score: { $gte: 8 } },
         ],
       })
-      .project({ name: 1, phone: 1 })
+      .project({ name: 1, phone: 1, mandal: 1 })
       .toArray();
     // console.log(result);
     res.status(200).json(result);
@@ -261,7 +261,7 @@ const onUpdatedRejectedPsEassign = async (req, res) => {
   try {
     await psModal.updateMany(
       {
-        _id: new ObjectId(req.body.task_id),
+        Location: req.body["signleRejectedTask"][0]?.location,
       },
       {
         $set: {
@@ -284,14 +284,13 @@ const onUpdatedRejectedPsEassign = async (req, res) => {
 
 const updatedOldTaskDistrictAssign = async (req, res) => {
   const taskModal = getDb().db().collection("tasks");
-  // console.log(req.body._id);
+  // console.log(req.body["signleRejectedTask"][0]?.location);
   try {
-    await taskModal.updateOne(
-      { _id: new ObjectId(req.body._id) },
+    await taskModal.updateMany(
+      { location: req.body["signleRejectedTask"][0]?.location },
       { $set: { rejected_dist_assign_new_user: "yes" } }
     );
     onUpdatedRejectedPsEassign(req, res);
-    // userTableUpdate(req, res);
   } catch (error) {
     return res.status(500).json({
       msg: error,
@@ -302,16 +301,17 @@ const updatedOldTaskDistrictAssign = async (req, res) => {
 export const addRejectedTask = async (req, res) => {
   const taskModal = getDb().db().collection("tasks");
   // console.log(req.params.id);
+  var values = [];
   // console.log(req.body);
-  try {
-    const docs = {
-      PS_name: req.body.PS_name,
-      AC_name: req.body.AC_name,
-      PS_No: req.body.PS_No,
-      AC_No: req.body.AC_No,
-      district: req.body.district,
-      mandal: req.body.mandal,
-      location: req.body.location,
+  for (let i of req.body["signleRejectedTask"]) {
+    values.push({
+      PS_name: i.PS_name,
+      AC_name: i.AC_name,
+      PS_No: i.PS_No,
+      AC_No: i.AC_No,
+      district: i.district,
+      mandal: i.mandal,
+      location: i.location,
       kit_start: "",
       kit_end: "",
       InstallationCertificate: "",
@@ -320,10 +320,12 @@ export const addRejectedTask = async (req, res) => {
       rejected_dist_assign_new_user: "no",
       action: "initiated",
       user_id: req.params.id,
-      task_id: req.body.task_id,
-    };
-    // console.log(docs);
-    await taskModal.insertOne(docs);
+      task_id: i.task_id,
+    });
+  }
+
+  try {
+    await taskModal.insertMany(values);
     updatedOldTaskDistrictAssign(req, res);
   } catch (error) {
     return res.status(500).json({
@@ -342,6 +344,26 @@ export const exelData = async (req, res) => {
       .find({ District: req.params.district })
       .toArray();
     res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const rechechingOnesWithId = async (req, res) => {
+  const psStaticTask = getDb().db().collection("district_task");
+  // console.log(req.params.id);
+  try {
+    await psStaticTask.updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+      },
+      {
+        $set: { thirdAccepted: "yes" },
+      }
+    );
+    res.status(200).json({ msg: "Rechecking Confirmations ....!" });
   } catch (error) {
     return res.status(500).json({
       msg: error,

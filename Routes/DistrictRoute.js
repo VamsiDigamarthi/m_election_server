@@ -7,6 +7,7 @@ import {
   notAssignMandalWiseUser,
   paymentInitiatedToUser,
   paymentNotReceviedUser,
+  rechechingOnesWithId,
   rejectedAllTaskFromUser,
   rejectedTaskDistrictBased,
   updatedOwnDistrictTask,
@@ -45,6 +46,10 @@ router.post(
 );
 
 router.get("/rejected-task-data/:district", rejectedTaskDistrictBased);
+
+// rechecking
+
+router.put("/rechecking/ones/:id", rechechingOnesWithId);
 
 // Exel Data
 

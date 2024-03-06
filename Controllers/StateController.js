@@ -36,10 +36,15 @@ export const allDelete = async (req, res) => {
 
 export const allPsDetails = async (req, res) => {
   // const psDetails = [];
+  // console.log(req.params.state);
   const psModal = getDb().db().collection("ps_details");
   try {
-    const result = await psModal.find().toArray();
-
+    const result = await psModal
+      .find({
+        State: req.params.state,
+      })
+      .toArray();
+    // console.log(result);
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({
@@ -50,7 +55,7 @@ export const allPsDetails = async (req, res) => {
 
 export const psDetailsFilterBasedOnDistrict = async (req, res) => {
   const psModal = getDb().db().collection("ps_details");
-  console.log(req.body.selectedDist);
+  // console.log(req.body.selectedDist);
   try {
     const result = await psModal
       .find({
@@ -112,6 +117,9 @@ export const assignTaskDistrictCoor = async (req, res) => {
         sub_task: req.body.selectedSubTaskValue,
         user_id: req.params.id,
         completed: "no",
+        secondAccepted: "no",
+        thirdAccepted: "no",
+        fouthAccepted: "no",
       };
       await psStaticTask.insertOne(doc);
       res.status(200).json({ msg: "Task Added Successfully" });
@@ -130,6 +138,108 @@ export const districtCoorTask = async (req, res) => {
       .find({ user_id: req.params.id })
       .toArray();
     res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const staticTaskAccepted = async (req, res) => {
+  const psStaticTask = getDb().db().collection("district_task");
+  // console.log(req.params.id);
+  try {
+    await psStaticTask.updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          secondAccepted: "yes",
+          thirdAccepted: "yes",
+          fouthAccepted: "yes",
+        },
+      }
+    );
+    res.status(200).json({ msg: "Accepted Task ....!" });
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const staticTaskRejected = async (req, res) => {
+  const psStaticTask = getDb().db().collection("district_task");
+
+  try {
+    await psStaticTask.updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+      },
+      {
+        $set: { secondAccepted: "yes" },
+      }
+    );
+    res.status(200).json({ msg: "Rejected Task ....!" });
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const allDistrictCoorSpecificState = async (req, res) => {
+  // console.log(req.params.state);
+  const userModal = getDb().db().collection("users");
+  try {
+    const result = await userModal
+      .find({
+        $and: [{ state: req.params.state }, { role: "2" }],
+      })
+      .toArray();
+
+    res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const onSecondTimeAccepted = async (req, res) => {
+  const psStaticTask = getDb().db().collection("district_task");
+  // console.log(req.params.id);
+  try {
+    await psStaticTask.updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+      },
+      {
+        $set: { fouthAccepted: "yes", thirdAccepted: "yes" },
+      }
+    );
+    res.status(200).json({ msg: "Rechecking Document Rejected ....!" });
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const recheckingDocumentBasedOnId = async (req, res) => {
+  const psStaticTask = getDb().db().collection("district_task");
+  // console.log(req.params.id);
+  try {
+    await psStaticTask.updateOne(
+      {
+        _id: new ObjectId(req.params.id),
+      },
+      {
+        $set: { thirdAccepted: "no" },
+      }
+    );
+    res.status(200).json({ msg: "Rechecking Document Rejected ....!" });
   } catch (error) {
     return res.status(500).json({
       msg: error,

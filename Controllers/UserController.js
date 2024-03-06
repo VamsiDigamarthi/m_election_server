@@ -94,14 +94,16 @@ export const userFetchTask = async (req, res) => {
 
 const onUpdatePsDetailsRejectedUser = async (req, res) => {
   const psModal = getDb().db().collection("ps_details");
+  console.log(req.body.taskId);
   try {
-    await psModal.updateOne(
-      { _id: new ObjectId(req.body.taskId) },
+    await psModal.updateMany(
+      { Location: req.body.taskId },
       {
         $set: { eassign: "rejected" },
-      }
+      },
+      { multi: true }
     );
-    res.status(200).json("updated task successfully ...!");
+    res.status(200).json("task updated  successfully ...!");
   } catch (error) {
     return res.status(500).json({
       msg: error,
@@ -111,10 +113,32 @@ const onUpdatePsDetailsRejectedUser = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   const taskModal = getDb().db().collection("tasks");
-  console.log(req.body);
+  // console.log(req.body);
+  // console.log(req.params.id);
   try {
-    await taskModal.updateOne(
-      { _id: new ObjectId(req.params.id) },
+    await taskModal.updateMany(
+      {
+        user_id: req.params.id,
+      },
+      { $set: { action: req.body.action } }
+    );
+    res.status(200).json("task updated  successfully ...!");
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+    });
+  }
+};
+
+export const rejectedTasks = async (req, res) => {
+  const taskModal = getDb().db().collection("tasks");
+  // console.log(req.body);
+  console.log(req.params.id);
+  try {
+    await taskModal.updateMany(
+      {
+        user_id: req.params.id,
+      },
       { $set: { action: req.body.action } }
     );
     onUpdatePsDetailsRejectedUser(req, res);
